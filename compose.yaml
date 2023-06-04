@@ -1,4 +1,5 @@
 services:
+
   database:
     image: mysql:8
     container_name: mysqldb
@@ -45,6 +46,19 @@ services:
     networks:
       - frontnet
     command: /app/start.sh
+
+  preprocess:
+    build: preprocess
+    image: preprocessim
+    container_name: preprocess
+    # restart: always
+    depends_on:
+      - database
+    networks:
+      - backnet
+    secrets:
+      - db-password
+    # command: /bin/bash
   
 
 volumes:
