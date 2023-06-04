@@ -1,7 +1,59 @@
 services:
+  database:
+    image: mysql:8
+    container_name: mysqldb
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backnet
+    environment:
+      - MYSQL_DATABASE=example
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 3306
+      - 33060
+
+  flask:
+    build: flask
+    image: flaskapp
+    container_name: flask
+    restart: always
+    ports:
+      - 8000:8000
+    networks:
+      - backnet
+      - frontnet
+    command: gunicorn -w 3 -t 60 -b 0.0.0.0:8000 app:app
+
+  nginx:
+    build: nginx
+    image: proxy
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/tmp/default.conf
+    environment:
+      - FLASK_SERVER_ADDR=flask:8000
+    ports:
+      - "80:80"
+    depends_on:
+      - flask
+    networks:
+      - frontnet
+    command: /app/start.sh
+  
 
 volumes:
+  db-data:
 
 secrets:
+  db-password:
+    file: database/password.txt
 
 networks:
+  backnet:
+  frontnet:
