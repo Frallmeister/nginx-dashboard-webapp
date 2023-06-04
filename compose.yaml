@@ -17,17 +17,17 @@ services:
       - 3306
       - 33060
 
-  flask:
-    build: flask
-    image: flaskapp
-    container_name: flask
+  dashapp:
+    build: dashapp
+    image: dashimage
+    container_name: dashapp
     restart: always
     ports:
       - 8000:8000
     networks:
       - backnet
       - frontnet
-    command: gunicorn -w 3 -t 60 -b 0.0.0.0:8000 app:app
+    command: gunicorn -w 3 -t 60 -b 0.0.0.0:8000 app:server
 
   nginx:
     build: nginx
@@ -37,11 +37,11 @@ services:
     volumes:
       - ./nginx/default.conf:/tmp/default.conf
     environment:
-      - FLASK_SERVER_ADDR=flask:8000
+      - FLASK_SERVER_ADDR=dashapp:8000
     ports:
       - "80:80"
     depends_on:
-      - flask
+      - dashapp
     networks:
       - frontnet
     command: /app/start.sh
