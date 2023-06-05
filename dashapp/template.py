@@ -21,6 +21,7 @@ def layout(engine):
                 value="",
                 id="cut-dropdown",
                 ),
+            html.Div(id="figure-div"),
             html.Div(id="table-div"),
         ]
     )
