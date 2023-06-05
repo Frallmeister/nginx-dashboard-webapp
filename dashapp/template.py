@@ -1,4 +1,4 @@
-from dash import dcc, html
+from dash import dcc, html, dash_table
 
 def layout(data):
     """Put all HTML here
@@ -7,7 +7,12 @@ def layout(data):
     frontend = html.Div(
         children=[
             html.H1("Hello World"),
-            html.P(data.to_string())
+            html.Div(children=[
+                dash_table.DataTable(
+                    data.to_dict("records"),
+                    [{"name": col, "id": col} for col in data.columns]
+                )
+                ])
         ]
     )
     return frontend
