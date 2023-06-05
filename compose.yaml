@@ -51,15 +51,15 @@ services:
     build: preprocess
     image: preprocessim
     container_name: preprocess
-    # restart: always
+    restart: on-failure
     depends_on:
       - database
     networks:
       - backnet
     secrets:
       - db-password
-    # command: /bin/bash
-  
+    volumes:
+      - ../data:/data
 
 volumes:
   db-data:
