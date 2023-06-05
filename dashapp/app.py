@@ -1,4 +1,8 @@
 import dash
+import pandas as pd
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+from models import Diamonds, Base
 from callbacks import register_callbacks
 from template import layout
 
@@ -9,7 +13,16 @@ app = dash.Dash(
 )
 server = app.server
 
-app.layout = layout()
+user = "root"
+with open("/run/secrets/db-password") as fp:
+    passwd = fp.read()
+host = "database"
+dbname = "example"
+engine = create_engine(f"mysql+pymysql://{user}:{passwd}@{host}/{dbname}?charset=utf8mb4")
+
+data = pd.read_sql("SELECT * FROM diamonds", engine)
+
+app.layout = layout(data)
 
 if __name__ == "__main__":
 	app.run_server(debug=True, host="0.0.0.0", port=8080)
