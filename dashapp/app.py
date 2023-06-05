@@ -21,9 +21,7 @@ dbname = "example"
 engine = create_engine(f"mysql+pymysql://{user}:{passwd}@{host}/{dbname}?charset=utf8mb4")
 Session = sessionmaker(engine)
 
-data = pd.read_sql("SELECT * FROM diamonds", engine)
-
-app.layout = layout(Session, data)
+app.layout = layout(engine)
 register_callbacks(app, engine)
 
 if __name__ == "__main__":

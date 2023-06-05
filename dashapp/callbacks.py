@@ -1,7 +1,6 @@
 from dash import Input, Output, html, dash_table
 import pandas as pd
 from sqlalchemy import select
-from models import Diamonds
 
 
 def register_callbacks(app, engine) -> None:

@@ -1,16 +1,15 @@
-from dash import dcc, html, dash_table
-from sqlalchemy import select, distinct
-from sqlalchemy.orm import Session
-from models import Diamonds
+from dash import dcc, html
+import pandas as pd
 
-def get_cut_values(Session):
-    with Session() as session:
-        stmt = select(distinct(Diamonds.cut))
-        cuts = [cut for cut in session.scalars(stmt)]
-    return cuts
+def get_cut_values(engine):
+    data = pd.read_sql(
+        "SELECT DISTINCT(cut) FROM diamonds",
+        engine,
+        )
+    return data["cut"].to_list()
 
 
-def layout(Session, data):
+def layout(engine):
     """Put all HTML here
     """
 
@@ -18,7 +17,7 @@ def layout(Session, data):
         children=[
             html.H1("Hello Diamonds"),
             dcc.Dropdown(
-                options=get_cut_values(Session),
+                options=get_cut_values(engine),
                 value="",
                 id="cut-dropdown",
                 ),
